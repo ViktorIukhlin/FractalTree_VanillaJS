@@ -7,9 +7,10 @@
 </head>
 
 <body>
-    <div class="canvas">
-        <canvas width="1366" height="800" id="my-canvas"></canvas>
+
+    <div class="canvas" id="canvas">
     </div>
+
     <div class="slider-container">
         <div>
             <input class="input-custom" type="range" min="1" max="200" value="150" class="slider" id="length">
@@ -26,6 +27,7 @@
         </div>
 
     </div>
+
 </body>
 
 <style>
@@ -39,8 +41,7 @@
 
     .canvas {
         width: 100%;
-        height: 100%;
-        display: flex;
+        display: inline-flex;
         justify-content: center;
         transform: rotate(180deg)
     }
@@ -51,6 +52,11 @@
 </style>
 
 <script>
+    const canvasBox = document.getElementById('canvas'); // It's all for adaptive 61 - 64
+    const width = document.documentElement.clientWidth;
+    const height = document.documentElement.clientHeight;
+    canvasBox.innerHTML = `<canvas width="${width}" height="${height - 120}" id="my-canvas"></canvas>`
+
     const context = document.querySelector("canvas").getContext("2d"),
         canvas = document.getElementById('my-canvas'),
         length = document.getElementById("length"),
@@ -59,6 +65,8 @@
     let lengthBox = document.getElementById("length-box"),
         angleBox = document.getElementById("angle-box"),
         scaleBox = document.getElementById("scale-box");
+
+
 
     lengthBox.innerHTML = length.value;
     angleBox.innerHTML = angle.value;

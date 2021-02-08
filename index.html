@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>SimpleFractal</title>
+</head>
+
+<body>
+    <div class="canvas">
+        <canvas width="1366" height="800" id="my-canvas"></canvas>
+    </div>
+    <div class="slider-container">
+        <div>
+            <input class="input-custom" type="range" min="1" max="200" value="150" class="slider" id="length">
+            <p>Length: <span id="length-box"></span></p>
+        </div>
+        <div>
+            <input class="input-custom" type="range" min="0" max="1" value="0.5" step="0.1" class="slider" id="angle">
+            <p>Angle: <span id="angle-box"></span></p>
+        </div>
+        <div>
+            <input class="input-custom" type="range" min="0.70" max="0.8" value="0.75" step="0.01" class="slider"
+                id="scale">
+            <p>Scale: <span id="scale-box"></span></p>
+        </div>
+
+    </div>
+</body>
+
+<style>
+    .slider-container {
+        display: flex;
+        justify-content: space-between;
+        width: 600px;
+        margin: 0 auto;
+        border-top: 2px solid green;
+    }
+
+    .canvas {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        transform: rotate(180deg)
+    }
+
+    .input-custom {
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    const context = document.querySelector("canvas").getContext("2d"),
+        canvas = document.getElementById('my-canvas'),
+        length = document.getElementById("length"),
+        angle = document.getElementById("angle"),
+        scale = document.getElementById("scale");
+    let lengthBox = document.getElementById("length-box"),
+        angleBox = document.getElementById("angle-box"),
+        scaleBox = document.getElementById("scale-box");
+
+    lengthBox.innerHTML = length.value;
+    angleBox.innerHTML = angle.value;
+    scaleBox.innerHTML = scale.value;
+
+    function branch(length, angle, scale) {
+        context.fillRect(0, 0, 1, length); // Draw a tree trunk
+
+        const MIN_LENGTH = 6;
+        if (length < MIN_LENGTH) // Terminating recursion when lines get too short
+            return;
+
+        context.save(); // Save the current state of the coordinate system
+
+        context.translate(0, length); // Move the "cursor" to the end of the "trunk-root"
+        context.rotate(-angle); // We rotate the coordinate system by some angle to the left
+        branch(length * scale, angle, scale); // Draw the left branch recursively
+
+        context.rotate(2 * angle); // Rotate the coordinate system by a symmetric angle to the right
+        branch(length * scale, angle, scale); // Recursively draw the right branch
+
+        context.restore(); // Restoring the initial state of the coordinate system
+    }
+
+    function clear(context, canvas) { //function for cleaning the canvas
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        const w = canvas.width;
+        canvas.width = 1;
+        canvas.width = w;
+
+        context.translate(document.querySelector("canvas").clientWidth / 2, 0);
+    }
+
+    context.translate(document.querySelector("canvas").clientWidth / 2, 0); // The initial offset of the coordinate system to center the tree
+    branch(length.value, angle.value, scale.value);
+
+    length.oninput = function () {
+        lengthBox.innerHTML = this.value;
+        clear(context, canvas);
+        branch(length.value, angle.value, scale.value);
+    }
+
+    angle.oninput = function () {
+        angleBox.innerHTML = this.value;
+        clear(context, canvas);
+        branch(length.value, angle.value, scale.value);
+    }
+    scale.oninput = function () {
+        scaleBox.innerHTML = this.value;
+        clear(context, canvas);
+        branch(length.value, angle.value, scale.value);
+    }
+</script>
+
+</html>
